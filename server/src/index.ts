@@ -25,6 +25,7 @@ import { getPosts } from './handlers/get_posts';
 import { getUserPosts } from './handlers/get_user_posts';
 import { getPostById } from './handlers/get_post_by_id';
 import { cleanupExpiredPosts } from './handlers/cleanup_expired_posts';
+import { getLocationsAndCategories } from './handlers/get_locations_and_categories';
 
 const t = initTRPC.create({
   transformer: superjson,
@@ -78,6 +79,10 @@ const appRouter = router({
   // Maintenance route for cleaning up expired posts
   cleanupExpiredPosts: publicProcedure
     .mutation(() => cleanupExpiredPosts()),
+
+  // Get available categories and locations
+  getLocationsAndCategories: publicProcedure
+    .query(() => getLocationsAndCategories()),
 });
 
 export type AppRouter = typeof appRouter;
