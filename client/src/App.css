@@ -1,24 +1,33 @@
 :root {
-  --background: #fff;
-  --text: #000;
-  --text-secondary: #666;
-  --spinner-border: #000;
+  --background: #111827; /* Dark background */
+  --text: #f9fafb; /* Light text */
+  --text-secondary: #9ca3af; /* Muted text */
+  --accent: #f59e0b; /* Golden accent */
+  --accent-muted: rgba(245, 158, 11, 0.1); /* Muted golden accent */
+  --spinner-border: #f59e0b;
   --spinner-border-top: transparent;
-  --dot-color: #000;
-  --grid-color: rgba(0,0,0,0.05);
-  --gradient-color: rgba(0,0,0,0.03);
+  --dot-color: #f59e0b;
+  --grid-color: rgba(245, 158, 11, 0.05);
+  --gradient-color: rgba(245, 158, 11, 0.03);
+  --card-background: rgba(31, 41, 55, 0.5); /* Semi-transparent dark cards */
+  --border-color: rgba(245, 158, 11, 0.2); /* Golden borders */
 }
 
-@media (prefers-color-scheme: dark) {
+/* Override for consistent dark theme */
+@media (prefers-color-scheme: light) {
   :root {
-      --background: #000;
-      --text: #fff;
-      --text-secondary: #888;
-      --spinner-border: #fff;
+      --background: #111827;
+      --text: #f9fafb;
+      --text-secondary: #9ca3af;
+      --accent: #f59e0b;
+      --accent-muted: rgba(245, 158, 11, 0.1);
+      --spinner-border: #f59e0b;
       --spinner-border-top: transparent;
-      --dot-color: #fff;
-      --grid-color: rgba(255,255,255,0.05);
-      --gradient-color: rgba(255,255,255,0.03);
+      --dot-color: #f59e0b;
+      --grid-color: rgba(245, 158, 11, 0.05);
+      --gradient-color: rgba(245, 158, 11, 0.03);
+      --card-background: rgba(31, 41, 55, 0.5);
+      --border-color: rgba(245, 158, 11, 0.2);
   }
 }
 * {
@@ -29,14 +38,20 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--background);
+  background: linear-gradient(135deg, var(--background) 0%, #0f172a 50%, var(--background) 100%);
   color: var(--text);
-  padding: 20px;
   line-height: 1.5;
   transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+/* Remove default body styling that centers content */
+body.app-body {
+  display: block;
+  padding: 0;
+  margin: 0;
+  align-items: unset;
+  justify-content: unset;
 }
 .container {
   text-align: center;
@@ -91,6 +106,30 @@ p.description {
   0%, 80%, 100% { opacity: 0; }
   40% { opacity: 1; }
 }
+/* Golden Timeline Specific Styles */
+.golden-gradient {
+  background: linear-gradient(135deg, 
+    rgba(245, 158, 11, 0.1) 0%, 
+    rgba(217, 119, 6, 0.05) 25%, 
+    transparent 50%,
+    rgba(245, 158, 11, 0.05) 75%,
+    rgba(245, 158, 11, 0.1) 100%);
+}
+
+.golden-text-gradient {
+  background: linear-gradient(135deg, #f59e0b, #eab308, #f59e0b);
+  background-size: 200% 200%;
+  animation: goldenShimmer 3s ease-in-out infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes goldenShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
 .grid {
   position: fixed;
   top: 0;
@@ -101,9 +140,11 @@ p.description {
   background-image: 
       linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
       linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   transition: background-image 0.3s ease;
+  opacity: 0.3;
 }
+
 .gradient {
   position: fixed;
   top: 0;
@@ -111,7 +152,12 @@ p.description {
   width: 100%;
   height: 100%;
   z-index: -2;
-  background: radial-gradient(circle at center, var(--gradient-color) 0%, transparent 50%);
+  background: radial-gradient(
+    ellipse at top center, 
+    rgba(245, 158, 11, 0.1) 0%, 
+    rgba(245, 158, 11, 0.05) 25%,
+    transparent 50%
+  );
   transition: background 0.3s ease;
 }
 
@@ -128,4 +174,74 @@ p.description {
   color: var(--text);
   text-decoration: none;
   font-weight: bold;
+}
+
+/* Premium card animations */
+.premium-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-color);
+}
+
+.premium-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(245, 158, 11, 0.1), 
+              0 10px 10px -5px rgba(245, 158, 11, 0.04);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+/* Golden button styles */
+.golden-button {
+  background: linear-gradient(135deg, #f59e0b, #eab308);
+  box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.golden-button:hover {
+  box-shadow: 0 6px 20px 0 rgba(245, 158, 11, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Loading spinner with golden theme */
+.golden-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(245, 158, 11, 0.2);
+  border-top: 3px solid #f59e0b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .golden-text-gradient {
+    font-size: 2.5rem;
+  }
+  
+  .premium-card {
+    margin: 0.5rem;
+  }
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(31, 41, 55, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #f59e0b, #eab308);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #eab308, #f59e0b);
 }

@@ -1,12 +1,4 @@
 import { z } from 'zod';
-import { randomBytes, pbkdf2Sync } from 'crypto';
-
-// Password hashing function - consistent across application
-export const hashPassword = (password: string): string => {
-  const salt = randomBytes(32).toString('hex');
-  const hash = pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
-  return `${salt}:${hash}`;
-};
 
 // User schema
 export const userSchema = z.object({
@@ -132,16 +124,3 @@ export const authResponseSchema = z.object({
 });
 
 export type AuthResponse = z.infer<typeof authResponseSchema>;
-
-// Locations and categories response schema
-export const locationsAndCategoriesSchema = z.object({
-  categories: z.array(postCategorySchema),
-  countries: z.array(z.string()),
-  cities: z.array(z.string()),
-  locations: z.array(z.object({
-    country: z.string(),
-    cities: z.array(z.string())
-  }))
-});
-
-export type LocationsAndCategories = z.infer<typeof locationsAndCategoriesSchema>;

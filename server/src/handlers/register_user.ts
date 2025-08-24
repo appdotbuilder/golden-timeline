@@ -1,7 +1,8 @@
+import { createHash, randomBytes, pbkdf2Sync } from 'crypto';
 import { db } from '../db';
 import { usersTable } from '../db/schema';
 import { eq } from 'drizzle-orm';
-import { type RegisterUserInput, type AuthResponse, hashPassword } from '../schema';
+import { type RegisterUserInput, type AuthResponse } from '../schema';
 
 export const registerUser = async (input: RegisterUserInput): Promise<AuthResponse> => {
   try {
@@ -18,8 +19,10 @@ export const registerUser = async (input: RegisterUserInput): Promise<AuthRespon
       };
     }
 
-    // Hash the password using pbkdf2 (consistent with login handler)
-    const password_hash = hashPassword(input.password);
+    // Hash the password using pbkdf2
+    const salt = randomBytes(32).toString('hex');
+    const hash = pbkdf2Sync(input.password, salt, 10000, 64, 'sha512').toString('hex');
+    const password_hash = `${salt}:${hash}`;
 
     // Create new user with default 10 credits
     const result = await db.insert(usersTable)
