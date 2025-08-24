@@ -1,14 +1,7 @@
 import { db } from '../db';
 import { postsTable } from '../db/schema';
 import { sql } from 'drizzle-orm';
-import { postCategorySchema, type PostCategory } from '../schema';
-
-export interface LocationsAndCategories {
-  categories: PostCategory[];
-  countries: string[];
-  cities: string[];
-  locations: Array<{ country: string; cities: string[] }>;
-}
+import { postCategorySchema, type LocationsAndCategories } from '../schema';
 
 export const getLocationsAndCategories = async (): Promise<LocationsAndCategories> => {
   try {
@@ -26,25 +19,34 @@ export const getLocationsAndCategories = async (): Promise<LocationsAndCategorie
       .from(postsTable)
       .execute();
 
-    // Get locations grouped by country
-    const locationsResult = await db.execute(
-      sql`
-        SELECT country, array_agg(DISTINCT city) as cities
-        FROM posts
-        GROUP BY country
-        ORDER BY country
-      `
-    );
-
     const countries = countriesResult.map(row => row.country).sort();
     const cities = citiesResult.map(row => row.city).sort();
     
-    // Transform the grouped locations result - properly handle the query result type
-    const locationsRows = locationsResult.rows as Array<{ country: string; cities: string[] }>;
-    const locations = locationsRows.map(row => ({
-      country: row.country,
-      cities: Array.isArray(row.cities) ? row.cities.sort() : []
-    }));
+    // Build locations grouped by country using the retrieved data
+    // Create a map to group cities by country
+    const countryToCity = new Map<string, Set<string>>();
+    
+    // Get all posts to build the grouping
+    const allPosts = await db
+      .select({ country: postsTable.country, city: postsTable.city })
+      .from(postsTable)
+      .execute();
+
+    // Group cities by country
+    allPosts.forEach(post => {
+      if (!countryToCity.has(post.country)) {
+        countryToCity.set(post.country, new Set());
+      }
+      countryToCity.get(post.country)!.add(post.city);
+    });
+
+    // Convert to the expected format
+    const locations = Array.from(countryToCity.entries())
+      .map(([country, citiesSet]) => ({
+        country,
+        cities: Array.from(citiesSet).sort()
+      }))
+      .sort((a, b) => a.country.localeCompare(b.country));
 
     return {
       categories,

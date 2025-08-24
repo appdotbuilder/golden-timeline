@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { trpc } from '@/utils/trpc';
 import { useState, useEffect, useCallback } from 'react';
-import type { LocationsAndCategories } from '../../../server/src/handlers/get_locations_and_categories';
+import type { LocationsAndCategories } from '../../../server/src/schema';
 
 interface LandingPageProps {
   onGetStarted: () => void;
